@@ -1,6 +1,384 @@
 <!doctype html>
-<html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Yüzme Antrenman</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#07111f;color:#f8fafc;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ padding:15px;
+}
+.wrap{max-width:760px;margin:auto}
+h1{margin:10px 0 2px;font-size:25px}
+.sub{color:#9fb0c2;font-size:12px;margin-bottom:15px}
+
+.nav{display:flex;gap:7px;margin-bottom:15px}
+button{
+ border:1px solid #26394e;background:#14253a;color:white;
+ border-radius:11px;padding:11px;font-weight:800
+}
+.nav button{flex:1}
+button.on{background:#f97316;border-color:#f97316}
+
+.screen{display:none}
+.screen.on{display:block}
+
+.grid{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:9px
+}
+.box{
+ background:#101d2d;border:1px solid #26394e;
+ border-radius:15px;padding:11px
+}
+label{
+ display:block;color:#a9b8c8;font-size:11px;
+ font-weight:800;margin-bottom:7px
+}
+input{
+ width:100%;padding:11px;border:0;border-radius:10px;
+ background:#fff4bf;font-size:16px;font-weight:800
+}
+.seg{display:flex;gap:5px;flex-wrap:wrap}
+
+.status{
+ margin:12px 0;padding:12px;text-align:center;
+ background:#0d2b22;border:1px solid #1e5b49;
+ border-radius:14px;font-weight:900
+}
+
+.kpis{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:8px
+}
+.kpi{
+ background:#101d2d;border:1px solid #26394e;
+ border-radius:14px;text-align:center;padding:10px
+}
+.kpi b{display:block;font-size:18px}
+.kpi small{color:#a9b8c8}
+
+.card{
+ margin:10px 0;background:#101d2d;
+ border:1px solid #26394e;border-radius:15px;
+ overflow:hidden
+}
+.head{padding:10px 13px;font-weight:900}
+.body{padding:13px;line-height:1.55;white-space:pre-wrap}
+
+.warm .head{background:#2563eb}
+.tech .head{background:#0891b2}
+.main .head{background:#dc2626}
+.race .head{background:#7c3aed}
+.cool .head{background:#159447}
+
+.person{
+ background:#101d2d;border:1px solid #26394e;
+ border-radius:14px;padding:13px;margin:8px 0
+}
+.person b{display:block;margin-bottom:5px}
+.person small{color:#a9b8c8;line-height:1.5}
+
+@media(max-width:430px){
+ .grid{grid-template-columns:1fr}
+ h1{font-size:22px}
+}
+</style>
+</head>
+
 <body>
-Yuzme Antrenman
+
+<div class="wrap">
+
+<h1>🏊 Yüzme Antrenman</h1>
+<div class="sub">2026–2027 • 120 dk • Antrenör Paneli</div>
+
+<div class="nav">
+<button class="on" onclick="page('training',this)">ANTRENMAN</button>
+<button onclick="page('athletes',this)">SPORCULAR</button>
+<button onclick="page('season',this)">SEZON</button>
+</div>
+
+<section id="training" class="screen on">
+
+<div class="grid">
+
+<div class="box">
+<label>TARİH</label>
+<input id="date" type="date">
+</div>
+
+<div class="box">
+<label>GRUP</label>
+<div class="seg" id="group">
+<button class="on" data-v="13–16">13–16</button>
+<button data-v="8–10">8–10</button>
+</div>
+</div>
+
+<div class="box">
+<label>PROFİL</label>
+<div class="seg" id="profile">
+<button data-v="Sprint">SPRINT</button>
+<button class="on" data-v="Orta">ORTA</button>
+<button data-v="Uzun">UZUN</button>
+</div>
+</div>
+
+<div class="box">
+<label>SEANS</label>
+<div class="seg" id="session">
+<button class="on" data-v="AM">AM</button>
+<button data-v="PM">PM</button>
+<button data-v="Tek">TEK</button>
+</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+</section>
+
+<section id="athletes" class="screen">
+
+<div class="person">
+<b>Melisa Öner</b>
+<small>
+50 Kelebek 38.48 • 100 Kelebek 1:25.60<br>
+50 Sırt 36.83 • 100 Sırt 1:19.76 • 200 Sırt 2:50.66<br>
+50 Kurbağa 55.54 • 100 Kurbağa 1:36.72<br>
+50 Serbest 32.44 • 100 Serbest 1:12.19<br>
+200 Serbest 2:34.66 • 400 Serbest 5:21.27<br>
+200 Karışık 2:49.82
+</small>
+</div>
+
+<div class="person">
+<b>Mine Filiz</b>
+<small>
+50 Kelebek 40.62<br>
+50 Sırt 43.58 • 100 Sırt 1:25.37<br>
+50 Kurbağa 42.14 • 100 Kurbağa 1:34.40 • 200 Kurbağa 3:17.26<br>
+50 Serbest 32.91 • 100 Serbest 1:15.10<br>
+200 Serbest 2:38.53 • 400 Serbest 5:31.27
+</small>
+</div>
+
+<div class="person">
+<b>Defne Ceylan</b>
+<small>
+50 Kelebek 42.10 • 100 Kelebek 1:36.54<br>
+50 Sırt 39.23 • 100 Sırt 1:23.35<br>
+50 Kurbağa 49.85 • 100 Kurbağa 1:48.51<br>
+50 Serbest 35.73 • 100 Serbest 1:20.92<br>
+200 Serbest 2:53.86 • 200 Karışık 3:10.55
+</small>
+</div>
+
+<div class="person">
+<b>Miraç Bayraktar</b>
+<small>
+50 Kurbağa 34.32<br>
+100 Kurbağa 1:18.53<br>
+50 Serbest 28.73
+</small>
+</div>
+
+</section>
+
+<section id="season" class="screen">
+
+<div class="card">
+<div class="head" style="background:#f97316">SEZON 2026–2027</div>
+<div class="body">Havuz başlangıcı: Eylül 3. hafta
+
+Pazartesi: OFF
+Salı: çift
+Çarşamba: tek
+Perşembe: çift
+Cuma: tek
+Cumartesi: çift
+Pazar: çift
+
+8–10 yaş: haftada 8 yüzme
+13–16 yaş: haftada 10 yüzme
+
+🏁 Aralık 3. hafta: Ana yarış dönemi
+🏁 Mayıs 2. hafta: Ana yarış dönemi</div>
+</div>
+
+</section>
+
+</div>
+
+<script>
+
+const S={
+ group:"13–16",
+ profile:"Orta",
+ session:"AM"
+};
+
+const days=[
+ "Pazar","Pazartesi","Salı","Çarşamba",
+ "Perşembe","Cuma","Cumartesi"
+];
+
+date.value=new Date().toISOString().slice(0,10);
+
+function page(id,b){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("on"));
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("on"));
+ document.getElementById(id).classList.add("on");
+ b.classList.add("on");
+}
+
+["group","profile","session"].forEach(id=>{
+ document.querySelectorAll("#"+id+" button").forEach(b=>{
+  b.onclick=()=>{
+   document.querySelectorAll("#"+id+" button")
+   .forEach(x=>x.classList.remove("on"));
+
+   b.classList.add("on");
+   S[id]=b.dataset.v;
+   render();
+  };
+ });
+});
+
+date.onchange=render;
+
+function card(c,t,v){
+ return `
+ <div class="card ${c}">
+ <div class="head">${t}</div>
+ <div class="body">${v}</div>
+ </div>`;
+}
+
+function plan(){
+
+ let young=S.group==="8–10";
+ let sprint=S.profile==="Sprint";
+ let long=S.profile==="Uzun";
+
+ if(young){
+  return{
+   meters:sprint?3200:long?4000:3600,
+   rpe:sprint?5:4,
+
+   technique:
+   "4 stil teknik • streamline • dönüş\n"+
+   "8×25 drill / koordinasyon",
+
+   main:sprint?
+   "16×25 kaliteli hız • 45 sn dinlenme\n"+
+   "8×50 Z2 kontrollü • 20 sn dinlenme":
+   "12×100 Z2 kontrollü • 20 sn dinlenme\n"+
+   "8×50 teknik tempo",
+
+   race:
+   "8×25 reaksiyon + kaliteli hız\n"+
+   "Teknik bozulursa set durdurulur"
+  };
+ }
+
+ return{
+  meters:sprint?4800:long?6200:5600,
+  rpe:sprint?8:long?6:7,
+
+  technique:
+  "8×50 drill/scull\n"+
+  "Streamline • dönüş • sualtı kalitesi",
+
+  main:sprint?
+  "3×(8×25 %90–95)\n"+
+  "Tekrar arası 45–60 sn\n"+
+  "Blok arası 3 dk":
+  long?
+  "3×(4×200 Z2–Z3)\n"+
+  "Tekrar arası 20 sn\n"+
+  "Blok arası 200 kolay":
+  "10×200 Z3 / eşik kontrollü\n"+
+  "20–30 sn dinlenme\n"+
+  "4×100 negatif split",
+
+  race:sprint?
+  "6×50 yarış temposu\n"+
+  "Tam kalite • uzun toparlanma":
+  "8×50 hedef yarış temposu\n"+
+  "Split kontrolü"
+ };
+}
+
+function render(){
+
+ const d=new Date(date.value+"T12:00:00");
+ const day=days[d.getDay()];
+
+ if(day==="Pazartesi"){
+  result.innerHTML=
+  '<div class="status">PAZARTESİ • OFF / TOPARLANMA</div>';
+  return;
+ }
+
+ const x=plan();
+
+ result.innerHTML=`
+
+ <div class="status">
+ ${day} • ${S.group} • ${S.profile} • ${S.session}
+ </div>
+
+ <div class="kpis">
+
+ <div class="kpi">
+ <b>${x.meters} m</b>
+ <small>HEDEF HACİM</small>
+ </div>
+
+ <div class="kpi">
+ <b>120 dk</b>
+ <small>BİRİM SÜRESİ</small>
+ </div>
+
+ <div class="kpi">
+ <b>RPE ${x.rpe}</b>
+ <small>YOĞUNLUK</small>
+ </div>
+
+ </div>
+
+ ${card("warm","🔵 ISINMA • 20 DK",
+ "600–1000 m Z1–Z2\n"+
+ "Mobilite • streamline • kontrollü teknik")}
+
+ ${card("tech","🟦 TEKNİK • 20 DK",
+ x.technique)}
+
+ ${card("main","🔴 ANA SET • 45 DK",
+ x.main)}
+
+ ${card("race","🟣 YARIŞ TEMPOSU • 20 DK",
+ x.race)}
+
+ ${card("cool","🟢 SOĞUMA • 15 DK",
+ "400–800 m çok kolay\n"+
+ "Teknik gevşeme + toparlanma\n\n"+
+ "Toplam birim süresi: 120 dk")}
+
+ `;
+}
+
+render();
+
+</script>
+
 </body>
 </html>

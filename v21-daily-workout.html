@@ -90,17 +90,17 @@ const fam={
 middle:{
 0:[W('Ana Eşik',3,4,'END2','Serbest',0,'3 tur × 4×100 CSS kontrollü; tur arası 200 A1'),W('Race Pace',2,4,'RP','Ana stil',0,'2 tur × 4×50 hedef yarış split; tur arası 200 kolay'),W('Hız',8,25,'SPR2','Ana stil',0,'Tam kalite; teknik bozulursa kes')],
 1:[W('Ana Eşik',6,200,'END2','Serbest',0,'1–3 kontrollü / 4–6 güçlü CSS'),W('Over-Under',8,100,'END2+','Serbest',0,'50 CSS altı + 50 CSS üstü'),W('RP',6,50,'RP','Ana stil',0,'Hedef yarış split')],
-2:[W('Aerobik Güç',10,150,'END3','Serbest',0,'İlk 100 kontrollü + son 50 güçlü'),W('Broken 200',3,4,'RP','Ana stil',0,'3 tur × 4×50 yarış temposu; tur arası 300 kolay'),W('Sprint',6,25,'SPR2','Ana stil',0,'Maksimum kalite')],
+2:[W('Aerobik Güç',10,150,'END3','Serbest',0,'İlk 100 kontrollü + son 50 güçlü'),W('Broken 200',12,50,'RP','Ana stil',0,'3 tur × (4×50) yarış temposu • turlar arasında 300 A1 kolay'),W('Sprint',6,25,'SPR2','Ana stil',0,'Maksimum kalite')],
 3:[W('Kontrol',8,100,'END2','Serbest',0,'Ölçülen 8×100; tekrar düşüşünü kontrol et'),W('Teknik Tempo',8,75,'A3','Ana stil',0,'DPS + kontrollü tempo'),W('Hız Koruma',6,25,'SPR2','Ana stil',0,'Tam dinlenme ile hız')]}
 ,sprint:{
 0:[W('Alaktik Hız',2,6,'SPR2','Ana stil',0,'2 tur × 6×25 tam kalite; tur arası 300 kolay'),W('Race Pace',8,50,'RP','Ana stil',0,'Hedef 100/200 split'),W('Aerobik Destek',8,150,'A2','Serbest',0,'Teknik aerobik')],
-1:[W('Sprint Dayanıklılık',8,50,'SPR3','Ana stil',0,'Kaliteyi koru; belirgin düşüşte kes'),W('Broken 100',4,4,'RP','Ana stil',0,'4 tur × 4×25 yarış temposu'),W('Power Kick',8,25,'SPR1','Kick',0,'Patlayıcı bacak','Kısa palet')],
+1:[W('Sprint Dayanıklılık',8,50,'SPR3','Ana stil',0,'Kaliteyi koru; belirgin düşüşte kes'),W('Broken 100',16,25,'RP','Ana stil',0,'4 tur × (4×25) yarış temposu • turlar arasında kolay yüzüş'),W('Power Kick',8,25,'SPR1','Kick',0,'Patlayıcı bacak','Kısa palet')],
 2:[W('Max Hız',3,4,'SPR2','Ana stil',0,'3 tur × 4×25; tam toparlanma'),W('Laktat',6,75,'SPR1','Ana stil',0,'Yüksek kalite; uzun toparlanma'),W('Start/15m',8,25,'SPR2','Ana stil',0,'Start + breakout')],
 3:[W('Hız Kontrol',6,25,'SPR2','Ana stil',0,'Ölçülen 6×25 maksimum kalite'),W('50 Kontrol',4,50,'SPR2','Ana stil',0,'Ölçülen 4×50; hız kaybını izle'),W('Recovery',8,100,'A1','Karışık',0,'Aktif toparlanma')]}
 ,distance:{
 0:[W('Eşik Blok',3,4,'END2','Serbest',0,'3 tur × 4×200 CSS; tur arası 200 A1'),W('Aerobik',4,400,'A2','Serbest',0,'Negatif split'),W('Hız Sonu',6,50,'SPR1','Serbest',0,'Yorgunken teknik hız')],
 1:[W('Uzun Eşik',5,400,'END2','Serbest',0,'Sabit CSS; son 100 teknik korunumu'),W('Over-Under',6,200,'END2+','Serbest',0,'100 kontrollü + 100 eşik üstü'),W('Speed',6,50,'SPR1','Serbest',0,'Kalite')],
-2:[W('Aerobik Güç',8,300,'END3','Serbest',0,'300 tekrarlarında kontrollü yüksek aerobik'),W('Broken 800',4,4,'RP','Serbest',0,'4 tur × 4×200 hedef yarış ritmi'),W('Finish',8,50,'SPR1','Serbest',0,'Son 15 m hız')],
+2:[W('Aerobik Güç',8,300,'END3','Serbest',0,'300 tekrarlarında kontrollü yüksek aerobik'),W('Broken 800',16,200,'RP','Serbest',0,'4 tur × (4×200) hedef yarış ritmi • turlar arasında kolay yüzüş'),W('Finish',8,50,'SPR1','Serbest',0,'Son 15 m hız')],
 3:[W('Kontrol',8,100,'END2','Serbest',0,'Ölçülen 8×100 CSS kontrol'),W('Aerobik Reset',5,300,'A2','Serbest',0,'Teknik ve düşük stres'),W('Hız Koruma',6,50,'SPR1','Serbest',0,'Tam kalite')]}
 };
 let specific=(fam[key()]||fam.middle)[micro];if(specific&&specific.length)core=specific;

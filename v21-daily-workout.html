@@ -144,22 +144,15 @@ Pazar:{title:'Recovery • Mobilite + Omuz Bakımı',min:20,items:['5 dk rahat h
 };let d=map[day]||map.Pazar;if(micro===2&&d.min>=30)d={...d,min:d.min+5,items:d.items.map((x,i)=>i>0&&i<5?x.replace(/3×/,'3–4×'):x)};if(micro===3&&d.min>=30)d={...d,min:Math.max(20,d.min-10),items:d.items.map(x=>x.replace(/3×/g,'2×').replace(/4×/g,'2–3×'))};return{...d,load,note:(micro===2?'Yükleme haftası: yalnız teknik kusursuzsa küçük hacim artışı. ':micro===3?'Konsolidasyon: kara hacmi azaltıldı. ':'')+'Su antrenmanının kalitesini bozacak tükenmeye gidilmez.'}}
 const DRY_VIDEO={
 'squat':'https://www.nsca.com/education/videos/bridge-series/bridge-optimizing-squat-technique/',
-'goblet squat':'https://www.nsca.com/education/videos/the-squathow-it-improves-athletic-performance/',
 'rdl':'https://www.nsca.com/education/articles/kinetic-select/romanian-deadlift-rdl/',
 'hinge':'https://www.nsca.com/education/articles/kinetic-select/romanian-deadlift-rdl/',
-'lunge':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'dead bug':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'side plank':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'push-up':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'row':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'external rotation':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'glute bridge':'https://www.acefitness.org/resources/everyone/exercise-library/',
-'pogo':'https://www.usaswimming.org/coaches-leaders/coaches/american-development-model',
-'jump':'https://www.usaswimming.org/coaches-leaders/coaches/american-development-model',
-'streamline':'https://www.usaswimming.org/swimmers-parents/swimmers/training-techniques',
-'medball':'https://www.nsca.com/education/nsca-videos',
-'mobilite':'https://www.usaswimming.org/swimmers-parents/swimmers/training-techniques'};
-function dryVideo(item){let s=String(item).toLowerCase(),k=Object.keys(DRY_VIDEO).find(k=>s.includes(k));return k?DRY_VIDEO[k]:null}
+'split squat':'https://www.catalystathletics.com/exercise/174/Split-Squat/',
+'reverse lunge':'https://www.nsca.com/education/videos/bridge-series/single-leg-squat-and-lunge-movements/',
+'dead bug':'https://www.youtube.com/watch?v=g_BYB0R-4Ws',
+'side plank':'https://www.nasm.org/resource-center/exercise-library/side-plank',
+'external rotation':'https://library.theprehabguys.com/vimeo-video/shoulder-external-rotation-band/',
+'scap push-up':'https://vimeo.com/538403353'};
+function dryVideo(item){let s=String(item).toLowerCase();let order=['split squat','reverse lunge','dead bug','side plank','external rotation','scap push-up','rdl','hinge','squat'];let k=order.find(k=>s.includes(k));return k?DRY_VIDEO[k]:null}
 function dryShareText(){let d=drylandPlan(),date=$('workoutDate').value,s=$('session').value;return '🏊 MERİN SU SPORLARI\n🏋️ KARA ANTRENMANI\n📅 '+date+' • '+s+'\n🎯 '+d.title+' • '+d.min+' dk • '+d.load+'\n\n'+d.items.map((x,i)=>(i+1)+'. '+x+(dryVideo(x)?'\n▶ '+dryVideo(x):'')).join('\n\n')+'\n\nNot: '+d.note}
 async function shareDryland(){let txt=dryShareText();if(navigator.share){try{await navigator.share({title:'Kara Antrenmanı',text:txt});return}catch(e){}}await navigator.clipboard.writeText(txt);alert('Kara antrenmanı kopyalandı. WhatsApp/mesaj ile gönderebilirsin.')}
 function printDryland(){let d=drylandPlan(),w=open('','_blank'),rows=d.items.map((x,i)=>'<tr><td>'+(i+1)+'</td><td><b>'+x+'</b></td><td>'+(dryVideo(x)?'<a href="'+dryVideo(x)+'">▶ Video</a>':'—')+'</td></tr>').join('');w.document.write('<html><head><title>Kara Antrenmanı</title><style>body{font-family:Arial;padding:28px;color:#111}h1{margin-bottom:4px}.meta{color:#555;margin-bottom:20px}table{width:100%;border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}.note{margin-top:20px;padding:12px;background:#f3f4f6}@media print{button{display:none}}</style></head><body><h1>MERİN SU SPORLARI • KARA ANTRENMANI</h1><div class="meta">'+$('workoutDate').value+' • '+$('session').value+' • '+d.title+' • '+d.min+' dk • '+d.load+'</div><table><tr><th>#</th><th>Hareket / Doz</th><th>Gösterim</th></tr>'+rows+'</table><div class="note">'+d.note+'</div><button onclick="print()">YAZDIR / PDF KAYDET</button></body></html>');w.document.close()}

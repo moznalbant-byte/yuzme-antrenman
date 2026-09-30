@@ -22,9 +22,9 @@ function describe(q,ctx={}){
  const zone=q.zone||String(q.z||'Teknik').split(' • ')[0],sec=String(q.sec||'Set'),p=String(q.p||''),stroke=q.s||String(q.z||'').split(' • ')[1]||'Serbest',r=Number(q.r)||1,d=Number(q.d)||50,send=Number(q.send)||0,course=parseInt(ctx.course||ctx.pool)||50;
  const z=zones[zone]||zones.Teknik;let purpose=z[0],tempo=z[1],technical=z[2];let execution=r+' tekrar yap; her tekrarda '+d+' metreyi '+stroke+' düzeninde tamamla.';if(p)execution+=' Set düzeni: '+p;
  const easy=zone==='A1'&&/rahat|toparlanma|hız zorlamadan/i.test(p);
- if(/ısınma|açılış|recovery swim/i.test(sec)){purpose='Ana sete hazırlanmak: su hissi, vücut pozisyonu ve rahat ritim.';technical='İlk tekrarlarda rahat başla; kulaç ve nefes düzenini yerleştir.'}
+ if(/[ıi]s[ıi]nma|açılış|recovery swim/i.test(sec)){purpose='Ana sete hazırlanmak: su hissi, vücut pozisyonu ve rahat ritim.';technical='İlk tekrarlarda rahat başla; kulaç ve nefes düzenini yerleştir.'}
  if(/soğuma|toparlanma|tur arası|recovery/i.test(sec)){purpose='Önceki yükten sonra rahat yüzüş ve toparlanma.';tempo='Kolay yüz; dereceyi zorlamak yerine gevşemeye odaklan.'}
- if(stroke==='Kick'){execution+=' Kick = bacak vuruşu. Karma kick/swim yazıyorsa bacak ve tam yüzüş bölümlerini verilen sırada yap.';technical='Bacak çalışmasında gövdeyi dengede tut; tahta kullanılıyorsa boynu gereksiz kaldırma.'}
+ if(sec==='Kick/Swim'&&[75,100].includes(d))execution+=' Her tekrarda ilk '+(d===75?25:50)+' m bacak, sonraki 50 m tam yüzüş; iki bölüm de rahat ve kontrollü.';if(stroke==='Kick'){execution+=' Kick = bacak vuruşu. Karma kick/swim yazıyorsa bacak ve tam yüzüş bölümlerini verilen sırada yap.';technical='Bacak çalışmasında gövdeyi dengede tut; tahta kullanılıyorsa boynu gereksiz kaldırma.'}
  if(/pull/i.test(sec+' '+p)){execution+=' Pull = kol çekişi odaklı yüzüş; pull buoy kullanılıyorsa belirtilen ekipmanla uygula.';technical='Suyu kontrollü yakala, çekişte omzu sıkıştırmadan uzun çizgiyi koru.'}
  if(/drill|teknik reset|beceri/i.test(sec+' '+stroke)){execution+=' Drill = teknik alıştırma; koçun gösterdiği hareketi uygula. Drill/Swim = alıştırmayı tam yüzüşle birleştir.'}
  if(/25 drill\s*\+\s*25 swim/i.test(p))execution+=' Her 50 metrede ilk 25 m teknik alıştırma, ikinci 25 m aynı beceriyi koruyarak tam yüzüş.';
@@ -34,17 +34,17 @@ function describe(q,ctx={}){
  if(/build|progressive|1→4|1-4/i.test(sec+' '+p)&&!easy){execution+=' Build = kontrollü hızlanma. Tekrar içindeki build, aynı tekrarda hız artışı; 1–4 build, dört tekrarın her birini öncekinden daha canlı yüzme demektir. Set notundaki düzeni izle.'}
  if(/over.?under/i.test(sec+' '+p)){execution+=' Over/under: set notunda yazan kontrollü ve eşik üstü bölümleri sırayla yüz; iki bölümün temposunu birbirine karıştırma.'}
  if(/broken/i.test(sec+' '+p)){execution+=' Broken = yarış mesafesini kısa parçalara bölerek yüzme; parçalar arasında grup çıkışını, turlar arasında ayrıca yazılan kolay yüzüşü uygula.'}
- if(/IM|karışık/i.test(sec+' '+p)){execution+=' IM düzeni istendiğinde sıra kelebek → sırt → kurbağalama → serbesttir; “stil değişimli” yazıyorsa koçun belirlediği stilleri sırayla kullan.'}
+ if(/\bIM\b/i.test(sec+' '+p)||stroke==='Karışık'){execution+=' IM düzeni istendiğinde sıra kelebek → sırt → kurbağalama → serbesttir; “stil değişimli” yazıyorsa koçun belirlediği stilleri sırayla kullan.'}
  if(stroke==='Ana stil'||stroke==='Branş'||stroke==='Seçili Stil')execution+=' Ana stil, sporcunun kayıtlı branşıdır; sporcu kaydı ve koç seçimiyle doğrula.';
  if(/start|sualtı|streamline|breakout|dönüş/i.test(sec+' '+p)){technical+=' Streamline = kollar baş üzerinde dar vücut çizgisi; breakout = sualtından ilk yüzey kulaçlarına geçiş. Start/dönüş noktası ve sualtı mesafesini koç belirler.'}
- if(easy){tempo=zones.A1[1];technical=zones.A1[2];if(/negatif split|prime|build/i.test(sec))execution+=' Bu seans toparlanma düzenindedir; hızlanma veya sprint ekleme.'}
+ if(easy){tempo=zones.A1[1];if(/negatif split|prime|build/i.test(sec))execution+=' Bu seans toparlanma düzenindedir; hızlanma veya sprint ekleme.'}
  let departure=r===1?'Tek blok yüzüş: '+d+' m. Blok için ayrılan plan süresi '+time(send)+'.':time(send)+' çıkış demek, tekrarların başlangıçları arasında '+time(send)+' olması demektir; bitirdikten sonra bu sürenin tamamını ayrıca bekleme.';
  let rest='Dinlenme = grup çıkışı − gerçek yüzme süresi. Kişisel hedef kartındaki aralık, hedef süreye göre beklenen dinlenmedir.';
  if(r===1)rest='Bu satırda tekrar arası dinlenme yok. Sonraki sete geçişi koç yönlendirir.';
  if(q.estimatedSend)departure+=' Bu çıkış sporcu ölçümüne dayanmayan koç referansıdır; grup hızına göre kontrol edilir.';
  const lengths=d/course, pool=Number.isInteger(lengths)?d+' m = '+course+' m havuzda '+lengths+' havuz boyu.':d+' m bu havuzda tam boylara bölünmez; ara mesafe başlangıç/bitiş yerini koç belirler.';
- const equipment=q.eq&&q.eq!=='Yok'?q.eq+'. “Opsiyonel” ekipman zorunlu değildir; kullanımı koç belirler.':'Zorunlu ekipman yok.';
- const check=zone==='Teknik'||/ısınma|soğuma|toparlanma/i.test(sec)?'Hareket kalitesi, rahat nefes ve doğru uygulama kontrol edilir.':'Her tekrarın süresini, varsa 25/50 m geçişini ve son tekrarlardaki teknik değişimini takip et.';
+ const equipment=q.eq&&q.eq!=='Yok'?q.eq+(/opsiyonel/i.test(q.eq)?'. Opsiyonel ekipman zorunlu değildir; kullanımı koç belirler.':'. Set boyunca belirtilen ekipman düzenini koru.'):'Zorunlu ekipman yok.';
+ const check=zone==='Teknik'||/[ıi]s[ıi]nma|soğuma|toparlanma/i.test(sec)?'Hareket kalitesi, rahat nefes ve doğru uygulama kontrol edilir.':'Her tekrarın süresini, varsa 25/50 m geçişini ve son tekrarlardaki teknik değişimini takip et.';
  return {purpose,execution,tempo,departure,rest,technical,equipment,pool,check};
 }
 const labels={purpose:'Amaç',execution:'Uygulama',tempo:'Tempo / efor',departure:'Çıkışın anlamı',rest:'Dinlenme',technical:'Teknik odak',equipment:'Ekipman',pool:'Mesafe düzeni',check:'Koç kontrolü'};

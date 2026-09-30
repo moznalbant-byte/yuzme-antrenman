@@ -29,7 +29,7 @@ function exportWorkoutPDF(data){
  const space=h=>{if(y+h>PAGE_H-85){finish();start()}};
  const wrap=(text,size=23,bold=false)=>{font(size,bold);let lines=[],line='';for(const word of String(text??'').split(/\s+/)){let trial=line?line+' '+word:word;if(ctx.measureText(trial).width>PAGE_W-2*MARGIN&&line){lines.push(line);line=word}else line=trial}if(line)lines.push(line);return lines};
  const text=(str,size=23,bold=false,color='#17283b')=>{for(const line of wrap(str,size,bold)){space(size+12);font(size,bold);ctx.fillStyle=color;ctx.fillText(line,MARGIN,y);y+=size+10}};
- const heading=str=>{space(80);y+=16;text(str,29,true);ctx.strokeStyle='#f97316';ctx.beginPath();ctx.moveTo(MARGIN,y);ctx.lineTo(PAGE_W-MARGIN,y);ctx.stroke();y+=18};
+ const heading=str=>{space(80);y+=16;text(str,29,true);ctx.strokeStyle='#f97316';ctx.beginPath();ctx.moveTo(MARGIN,y);ctx.lineTo(PAGE_W-MARGIN,y);ctx.stroke();y+=36};
  start();text(data.includeWater?'GÜNÜN ANTRENMANI':'KARA ANTRENMANI',38,true);text(data.age+' • '+data.profile+' • '+data.pool,21);y+=12;
  if(data.includeWater){text('Toplam su metrajı: '+data.total+' m',25,true);text('Sporcular: '+(data.athletes.join(', ')||'Sporcu seçilmedi'),21);text('Hedef süre her tekrar içindir. Çıkış ve dinlenme ayrı gösterilir.',19);heading('Su Antrenmanı');
  data.sets.forEach((q,i)=>{space(130);text('SET '+(i+1)+' • '+q.sec,25,true);text(q.r+' × '+q.d+' m • '+q.s+' • '+q.z+' • Metraj: '+(q.r*q.d)+' m',23,true);text('Grup çıkışı: '+q.sendText+' • Ekipman: '+(q.eq||'Yok'),21);text(q.p,20);

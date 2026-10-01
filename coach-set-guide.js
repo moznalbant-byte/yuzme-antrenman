@@ -35,7 +35,7 @@ function describe(q,ctx={}){
  if(/over.?under/i.test(sec+' '+p)){execution+=' Over/under: set notunda yazan kontrollü ve eşik üstü bölümleri sırayla yüz; iki bölümün temposunu birbirine karıştırma.'}
  if(/broken/i.test(sec+' '+p)){execution+=' Broken = yarış mesafesini kısa parçalara bölerek yüzme; parçalar arasında grup çıkışını, turlar arasında ayrıca yazılan kolay yüzüşü uygula.'}
  if(/\bIM\b/i.test(sec+' '+p)||stroke==='Karışık'){execution+=' IM düzeni istendiğinde sıra kelebek → sırt → kurbağalama → serbesttir; “stil değişimli” yazıyorsa koçun belirlediği stilleri sırayla kullan.'}
- if(stroke==='Ana stil'||stroke==='Branş'||stroke==='Seçili Stil')execution+=' Ana stil, sporcunun kayıtlı branşıdır; sporcu kaydı ve koç seçimiyle doğrula.';
+ if(stroke==='Ana stil'||stroke==='Branş'||stroke==='Seçili Stil')execution+=' Branş, sporcunun kayıtlı yüzme stilidir; sporcu kaydı ve koç seçimiyle doğrula.';
  if(/start|sualtı|streamline|breakout|dönüş/i.test(sec+' '+p)){technical+=' Streamline = kollar baş üzerinde dar vücut çizgisi; breakout = sualtından ilk yüzey kulaçlarına geçiş. Start/dönüş noktası ve sualtı mesafesini koç belirler.'}
  if(easy){tempo=zones.A1[1];if(/negatif split|prime|build/i.test(sec))execution+=' Bu seans toparlanma düzenindedir; hızlanma veya sprint ekleme.'}
  let departure=r===1?'Tek blok yüzüş: '+d+' m. Blok için ayrılan plan süresi '+time(send)+'.':time(send)+' çıkış demek, tekrarların başlangıçları arasında '+time(send)+' olması demektir; bitirdikten sonra bu sürenin tamamını ayrıca bekleme.';

@@ -22,9 +22,11 @@ ctx.__test.set({arr:{0:'TAMAMLANMADI'},workArr:{0:20.3}});ctx.__test.commit();as
 // Pausing and resuming retains elapsed repeat time and arrivals.
 let clock=Date.now(),oldNow=ctx.Date.now;ctx.Date.now=()=>clock;ctx.__test.set({arr:{0:'1:00.0'}});e.el('start').onclick();clock+=10000;assert.equal(ctx.__test.repElapsed(),10);e.el('start').onclick();clock+=5000;assert.equal(ctx.__test.repElapsed(),10);e.el('start').onclick();clock+=7000;assert.equal(ctx.__test.repElapsed(),17);assert.equal(ctx.__test.state().arr[0],'1:00.0');e.el('start').onclick();ctx.Date.now=oldNow;
 // Missing branch data never fabricates a Serbest target in the live screen.
-storage.v18Athletes=JSON.stringify([{name:'Test',stroke:'',pb:{'50':{Serbest:{100:60}}}}]);ctx.__test.renderLive();payload.targets={};storage.ks_v21_workout=JSON.stringify(payload);ctx.__test.loadDaily();ctx.__test.renderLive();assert(e.el('athletes').innerHTML.includes('Hedef verisi eksik'));
+storage.v18Athletes=JSON.stringify([{name:'Test',stroke:'',pb:{'50':{Serbest:{100:60}}}}]);ctx.__test.renderLive();payload.targets={};storage.ks_v21_workout=JSON.stringify(payload);ctx.__test.loadDaily();ctx.__test.renderLive();assert(e.el('athletes').innerHTML.includes('Ana branş seçilmedi'));
 // Energy distribution and transition budget.
 let day=fs.readFileSync(root+'v21-daily-workout.html','utf8').match(/<script>([\s\S]*)<\/script>/)[1];day=day.slice(0,day.indexOf('if(period){'));vm.runInContext(day,ctx);run("workout=[{r:8,d:50,workDistance:25,returnDistance:25,z:'SPR2',send:120,eq:'Palet'},{r:4,d:100,z:'A1',send:120,eq:'Yok'}]");const zones=run('zoneDistribution()');assert.equal(zones.raw.SPR2,200);assert.equal(zones.raw.A1,600);assert.equal(zones.total,800);assert.equal(run('transitionSeconds()'),90);assert.equal(run('workoutDuration().transitionMin'),1.5);
 console.log('PASS: correct branş targets, missing-data behavior, canonical history/adaptation, separate work split, energy split, transitions, queue errors/retry/reload/revision, cloud merge, live commit/resume');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
+
+

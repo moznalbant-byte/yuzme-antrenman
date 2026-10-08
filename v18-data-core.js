@@ -14,7 +14,7 @@ function json(k,f){try{let x=JSON.parse(localStorage.getItem(k));return x==null?
 function save(k,v){localStorage.setItem(k,JSON.stringify(v));return v}
 function courseKey(v){v=String(v||'50');return v.includes('25')?'25':'50'}
 function roster(){let m={};ROSTER.forEach(n=>m[n]={name:n,pb:{},source:'çekirdek'});let cloud=json('ks_cloud_athletes',[]);if(Array.isArray(cloud))cloud.forEach(a=>{if(a?.name)m[a.name]={...m[a.name],name:a.name,stroke:a.primary_stroke||'',birth:a.birth_date||'',source:'bulut'}});let old=json('ybAth13',[]);if(Array.isArray(old))old.forEach(a=>{if(a&&a.name)m[a.name]=Object.assign({},m[a.name]||{},a)});let custom=json('v18Athletes',[]);if(Array.isArray(custom))custom.forEach(a=>{if(a&&a.name)m[a.name]=Object.assign({},m[a.name]||{},a,{source:'kullanıcı'})});return Object.values(m)}
-function addAthlete(a){a=a||{};let name=String(a.name||'').trim();if(!name)throw new Error('Sporcu adı zorunlu');let list=json('v18Athletes',[]);if(!Array.isArray(list))list=[];let item={id:a.id||('ath_'+Date.now()),name,birth:a.birth||'',sex:a.sex||'',group:a.group||'',event:a.event||'200/400',stroke:a.stroke||'Serbest',course:courseKey(a.course),height:a.height||'',notes:a.notes||'',createdAt:a.createdAt||new Date().toISOString(),pb:a.pb||{}};let i=list.findIndex(x=>x&&x.name===name);if(i>=0)item=Object.assign({},list[i],item);if(i>=0)list[i]=item;else list.push(item);save('v18Athletes',list);return item}
+function addAthlete(a){a=a||{};let name=String(a.name||'').trim();if(!name)throw new Error('Sporcu adı zorunlu');let list=json('v18Athletes',[]);if(!Array.isArray(list))list=[];let item={id:a.id||('ath_'+Date.now()),name,birth:a.birth||'',sex:a.sex||'',group:a.group||'',event:a.event||'200/400',stroke:a.stroke||'',course:courseKey(a.course),height:a.height||'',notes:a.notes||'',createdAt:a.createdAt||new Date().toISOString(),pb:a.pb||{}};let i=list.findIndex(x=>x&&x.name===name);if(i>=0)item=Object.assign({},list[i],item);if(i>=0)list[i]=item;else list.push(item);save('v18Athletes',list);return item}
 function removeAthlete(name){let list=json('v18Athletes',[]);save('v18Athletes',Array.isArray(list)?list.filter(x=>x&&x.name!==name):[])}
 function athlete(name){return roster().find(x=>x.name===name)||null}
 function tests(){let a=json('v17Tests',[]),b=json('ks_test_history',[]);return (Array.isArray(a)?a:[]).concat(Array.isArray(b)?b:[])}
@@ -54,6 +54,27 @@ function workoutTarget(n,q,c){if(q.workDistance){
  return {...part,lo,hi,t,send,restLo:Math.max(0,actualSend-hi),restHi:Math.max(0,actualSend-lo),split50:null,split25:null,workLo:part.lo,workHi:part.hi,workTarget:part.t,workRange:fmt(part.lo)+'–'+fmt(part.hi),workDistance:q.workDistance,returnDistance:q.returnDistance,source:q.workDistance+' m çalışma hedefi '+fmt(part.lo)+'–'+fmt(part.hi)+' + '+q.returnDistance+' m kolay serbest '+fmt(easy.lo)+'–'+fmt(easy.hi)+' • Gösterilen süre tüm '+q.d+' m içindir • '+part.source+' • Kolay bölüm: '+easy.source};
  }let stroke=['Ana stil','Branş','Seçili Stil','Yarış temposu'].includes(q.s)?(athlete(n)?.stroke||null):['Drill/Swim','Karışık'].includes(q.s)?'Serbest':q.s;if(!stroke)return null;let css=stroke==='Serbest'&&window.KSData?.css?KSData.css(n,c):null,b=window.KSData?.targetBase?KSData.targetBase(n,stroke,c,q.d):null;if(!stroke||!b&&!css)return null;let z=q.z||'A2',t,source;if(stroke==='Serbest'&&css&&['A1','A2','A3','END2','END2+','END3'].includes(z)){let pace={A1:1.16,A2:1.10,A3:1.055,END2:1.025,'END2+':1.01,END3:.995}[z],distAdj=q.d<=50?.015:q.d>=400?.008:0;t=css.sec100*(q.d/100)*(pace+distAdj);source=css.source+' • CSS-temelli '+z}else{if(!b)return null;let mult={A1:1.16,A2:1.10,A3:1.055,END2:1.025,END3:1.005,SPR1:1.04,SPR2:1.01,SPR3:1.03,RP:1,Teknik:1.22},m=mult[z]||1.08;t=b.time*m;source=b.source+' • Referans-temelli tahmin '+z}let ad=window.KSData?.adaptation?KSData.adaptation(n,z,c,stroke):{factor:1,reason:'Adaptasyon verisi yok',confidence:'none'};t*=Number(ad.factor)||1;source+=' • '+ad.reason;let band=['RP','SPR1','SPR2','SPR3'].includes(z)?.01:.012,lo=t*(1-band),hi=t*(1+band),rx=rxRest(z,Number(q.d)||50,t),send=Math.ceil((hi+rx.target)/5)*5,split50=q.d>=100?t/(q.d/50):null,split25=q.d>=50?t/(q.d/25):null;return{lo,hi,t,send,restLo:Math.max(0,(q.send||send)-hi),restHi:Math.max(0,(q.send||send)-lo),restTarget:rx.target,split50,split25,course:c,source:source+' • Koç referansı '+z,css100:css?.sec100||null,unverified:b?.unverified,adaptation:ad}}
 
+function targetStatus(name,q,course){
+ if(workoutTarget(name,q,course))return{ready:true,reason:'Kişisel hedef mevcut'};
+ const stroke=resolveStroke(name,q),distance=q.workDistance||q.d;
+ if(!stroke)return{ready:false,reason:'Ana branş seçilmedi'};
+ if(['Kick','Streamline'].includes(stroke))return{ready:false,reason:'Bu beceri için ölçülmüş set/test süresi gerekli; yarış PB’si doğrudan kullanılmaz'};
+ if(q.s==='Karışık'||q.s==='Drill/Swim')return{ready:false,reason:'Teknik/karışık set için serbest referansı eksik; koç tempo kontrolü gerekli'};
+ return{ready:false,reason:distance+' m '+stroke+' referansı'+(stroke==='Serbest'?' / CSS':'')+' eksik. İlgili mesafe testi gerekli'};
+}
+async function savePrimaryStroke(name,stroke){
+ const allowed=['Serbest','Sırtüstü','Kurbağalama','Kelebek','Bireysel Karışık'];
+ if(!allowed.includes(stroke))throw Error('Geçerli ana branş seç');
+ const rows=json('ks_cloud_athletes',[]),a=rows.find(x=>x.name===name);
+ if(!a?.id)throw Error('Sporcu bulut kaydı bulunamadı; veriyi yenile');
+ const response=await g.fetch('https://npsnbbrskgxuyossjvnc.supabase.co/rest/v1/athletes?id=eq.'+encodeURIComponent(a.id),{method:'PATCH',headers:{apikey:'sb_publishable_jtLARIT9HuqTCmbIMxCNQQ_XQLwEyjj','Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify({primary_stroke:stroke})});
+ const data=await response.json();if(!response.ok||!Array.isArray(data)||data.length!==1||data[0].primary_stroke!==stroke)throw Error(data.message||'Branş kaydedilemedi; kayıt yetkisini kontrol et');
+ save('ks_cloud_athletes',rows.map(x=>x.id===a.id?data[0]:x));
+ // Remove stale local stroke overrides only after the cloud write succeeds.
+ ['ybAth13','v18Athletes'].forEach(k=>{const local=json(k,[]);if(Array.isArray(local))save(k,local.map(x=>x.name===name?{...x,stroke}:x))});
+ return data[0];
+}
+
 function reportKey(r){return [r.date,r.session||'',r.group||''].join('|')}
 function storeReport(report){let h=json('ks_workout_history',[]).filter(x=>reportKey(x)!==reportKey(report));h.push(report);save('ks_workout_history',h);return report}
 function queueWorkout(report,plan=[]){let queue=json('ks_workout_upload_queue',[]),key=reportKey(report),old=queue.find(j=>j.key===key);let hash=2166136261;for(const c of key)hash=Math.imul(hash^c.charCodeAt(0),16777619);let job={key,code:old?.code||('OFF'+(hash>>>0).toString(36).toUpperCase()),revision:(old?.revision||0)+1,report:JSON.parse(JSON.stringify(report)),plan:JSON.parse(JSON.stringify(plan)),lastError:null};queue=queue.filter(j=>j.key!==key);queue.push(job);save('ks_workout_upload_queue',queue);return job}
@@ -71,5 +92,5 @@ async function flushQueue(db){let sent=0;if(!db||g.navigator?.onLine===false)ret
  return {sent,pending:json('ks_workout_upload_queue',[]).length};
 }
 function integrity(){let r=roster(),dup=r.map(x=>x.name).filter((n,i,a)=>a.indexOf(n)!==i),bad=tests().filter(x=>!x.athlete||!x.type);return{athletes:r.length,tests:tests().length,duplicateNames:dup,badTests:bad.length,ok:!dup.length&&!bad.length}}
-g.KSData={version:'19.0',ROSTER,PBDB,roster,athlete,addAthlete,removeAthlete,tests,latest,pb,css,targetBase,courseKey,ageDays,fmt,integrity,syncCloud,refreshCloudData,cloudPB,measuredHistory,adaptation,workoutTarget,resolveStroke,energyZone,normalizeResult,reportKey,storeReport,queueWorkout,flushWorkoutQueue};
+g.KSData={version:'19.0',ROSTER,PBDB,roster,athlete,addAthlete,removeAthlete,tests,latest,pb,css,targetBase,courseKey,ageDays,fmt,integrity,syncCloud,refreshCloudData,cloudPB,measuredHistory,adaptation,workoutTarget,resolveStroke,targetStatus,savePrimaryStroke,energyZone,normalizeResult,reportKey,storeReport,queueWorkout,flushWorkoutQueue};
 })(window);

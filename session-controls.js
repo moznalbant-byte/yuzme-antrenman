@@ -1,6 +1,6 @@
 /* Daily plan controls; targets are recalculated by the existing PB/CSS engine. */
 let unitVariant=0,unitEdited=false;
-function draftKey(){return JSON.stringify([$('workoutDate').value,$('age').value,$('profile').value,$('pool').value,$('session').value,$('programSource')?.value||'legacy',$('teamLevel')?.value||'B',$('atZone')?.value||'END2',$('atRest')?.value||'10',selected,activeGroup?.id||null,period?.active?.[2]||'',period?.active?.[5]||75]);}
+function draftKey(){return JSON.stringify(['complete-source-v3',$('trainingStroke')?.value||'Serbest',$('workoutDate').value,$('age').value,$('profile').value,$('pool').value,$('session').value,$('programSource')?.value||'legacy',$('teamLevel')?.value||'B',$('atZone')?.value||'END2',$('atRest')?.value||'10',selected,activeGroup?.id||null,period?.active?.[2]||'',period?.active?.[5]||75]);}
 function saveUnitDraft(){try{localStorage.setItem('ks_daily_unit_draft',JSON.stringify({key:draftKey(),sets:workout,variant:unitVariant}));}catch(e){actionStatus('Birim bu cihazda kaydedilemedi.');}}
 function restoreUnitDraft(){try{const d=JSON.parse(localStorage.getItem('ks_daily_unit_draft')||'null');if(!planBlocked&&d?.key===draftKey()&&Array.isArray(d.sets)&&d.sets.length){unitVariant=Number(d.variant)||0;workout=d.sets.map(rebuildEditedSet);unitEdited=true;render();actionStatus('Bu gün için düzenlediğin birim cihazdan geri açıldı.');}}catch(e){}}
 function actionStatus(text){const el=$('actionStatus');if(el)el.textContent=text;}
@@ -8,7 +8,7 @@ function persistSelection(){try{localStorage.setItem('ks_daily_selection',JSON.s
 function restoreSelection(){try{const s=JSON.parse(localStorage.getItem('ks_daily_selection')||'null');if(s&&s.groupId===(activeGroup?.id||null))selected=s.names.filter(n=>KSData.athlete(n));}catch(e){}}
 function rebuildEditedSet(q){
  const x={...q,paceGroups:[],missingNames:[]};
- if(q.coachSource){x.send=q.fixedSend?q.send:q.coachCalibrated?q.sourceSend:Math.ceil((q.d/100*(isDevelopment()?130:q.s==='Kick'?130:100)+(q.restSeconds??15))/5)*5;if(!q.coachUnmapped&&!q.fixedSend)assignPaceGroups(x);else{x.estimatedSend=!q.fixedSend;x.missingNames=[...selected];x.min=+(q.r*x.send/60).toFixed(1);}return {...x,recordPerformance:false,qualityRecord:false,guide:{...q.guide,execution:q.p}};}
+ if(q.coachSource){x.send=q.fixedSend?q.send:q.coachCalibrated?q.sourceSend:Math.ceil((q.d/100*(isDevelopment()?130:q.s==='Kick'?130:100)+(q.restSeconds??15)+(q.internalRestSeconds||0))/5)*5;if(!q.coachUnmapped&&!q.fixedSend)assignPaceGroups(x);else{x.estimatedSend=!q.fixedSend;x.missingNames=[...selected];x.min=+(q.r*x.send/60).toFixed(1);}return {...x,recordPerformance:false,qualityRecord:false,guide:{...q.guide,execution:q.p}};}
  const ts=selected.map(n=>KSData.workoutTarget(n,{...x,send:null},course())).filter(Boolean);
  const estimate=x.d/100*(isDevelopment()?130:100)+rxRest(x.z,x.d,x.d).target;
  x.send=Math.ceil((ts.length?Math.max(...ts.map(t=>t.send)):estimate)/5)*5;
@@ -18,6 +18,7 @@ function rebuildEditedSet(q){
  assignPaceGroups(x);x.guide=sameSideGuide(x);return x;
 }
 function editSetMarkup(q,i){
+ if(q.timedWork)return '<p class="muted">Süreli çalışma: '+q.timedWork+' sn. Mesafe antrenmanda ölçülür; bu satır sabit süreyle uygulanır.</p>';
  const options=(list,value)=>list.map(x=>'<option '+(x===value?'selected':'')+'>'+escapeHtml(x)+'</option>').join('');
  return '<details class="set-editor"><summary>✎ Seti düzenle</summary><div class="edit-grid">'+
  '<label>Tekrar<input data-edit="r" type="number" min="1" max="100" value="'+q.r+'"></label>'+
@@ -31,7 +32,7 @@ function editSetMarkup(q,i){
 }
 function wireSessionControls(){
  $('generate').onclick=()=>{unitVariant=0;unitEdited=false;localStorage.removeItem('ks_daily_unit_draft');generate();actionStatus(workout.length?'Günün planı oluşturuldu. Farklı bir düzen için alternatif birim seç.':planWarnings.join(' ')||'Pazartesi dinlenme günü.');};
- $('alternativeUnit').onclick=()=>{if($('programSource')?.value!=='legacy'){const list=['ladder','variable','technique'],current=workout[0]?.sourceFamily||'ladder';$('programSource').value=list[(list.indexOf(current)+1)%list.length];unitEdited=false;localStorage.removeItem('ks_daily_unit_draft');generate();actionStatus('Başka bir set ailesi açıldı; yeni amaç ve çıkışları kontrol et.');return;}unitVariant=(unitVariant+1)%3;unitEdited=false;localStorage.removeItem('ks_daily_unit_draft');generate();actionStatus(workout.length?'Alternatif '+(unitVariant+1)+' oluşturuldu. Günün amacı ve tempo bölgeleri korundu.':planWarnings.join(' ')||'Pazartesi dinlenme günü.');};
+ $('alternativeUnit').onclick=()=>{if(!['legacy','auto'].includes($('programSource')?.value)){const list=['ladder','variable','morning','technique'],current=workout[0]?.sourceFamily||'ladder';$('programSource').value=list[(list.indexOf(current)+1)%list.length];unitEdited=false;localStorage.removeItem('ks_daily_unit_draft');generate();actionStatus('Başka bir set ailesi açıldı; yeni amaç ve çıkışları kontrol et.');return;}unitVariant=(unitVariant+1)%3;unitEdited=false;localStorage.removeItem('ks_daily_unit_draft');generate();actionStatus(workout.length?'Alternatif '+(unitVariant+1)+' oluşturuldu. Günün amacı ve tempo bölgeleri korundu.':planWarnings.join(' ')||'Pazartesi dinlenme günü.');};
  $('selectAthletes').onclick=()=>{const p=$('athletes').closest('details');p.open=true;p.scrollIntoView({behavior:'smooth',block:'start'});};
  $('sets').addEventListener('click',e=>{
   const save=e.target.closest('[data-save-set]'),move=e.target.closest('[data-move-set]');
@@ -53,6 +54,17 @@ function updateButtonStates(){
  $('startLive').title=reason;$('alternativeUnit').disabled=planBlocked||!workout.length;
  $('unitFlow').innerHTML=workout.length?'<b>BİRİM AKIŞI</b><p>'+[...new Set(workout.map(q=>q.flowStage||q.sec))].map(escapeHtml).join(' → ')+'</p><span class="muted">'+(unitEdited?'Koç tarafından düzenlenen birim':workout[0]?.sourceTitle?escapeHtml(workout[0].sourceTitle)+' • Kaynak set yapısı':'Alternatif '+(unitVariant+1)+' • Günün profiline göre hazırlık, ana çalışma ve rahat bitiriş')+'</span>':'<b>BİRİM OLUŞTURULMADI</b><p>'+escapeHtml(reason)+'</p>';
 }
+function renderSetRows(renderer){return CoachPersonalPace.groups(workout).map(g=>{
+ const rows=g.indices.map(i=>renderer(workout[i],i)).join('');if(g.indices.length===1)return rows;
+ const total=g.indices.reduce((s,i)=>s+workout[i].r*workout[i].d,0);
+ return '<details class="card"><summary><b>'+escapeHtml(g.family)+' • Tur '+g.round+' • '+total+' m</b> — tekrarları ve hedefleri göster</summary>'+rows+'</details>';
+}).join('');}
+function pdfSetGroups(rows){return CoachPersonalPace.groups(rows).map(g=>{
+ if(g.indices.length===1)return rows[g.indices[0]];
+ const parts=g.indices.map(i=>rows[i]),first=parts[0],meters=parts.reduce((n,q)=>n+q.r*q.d,0);
+ const names=[...new Set(parts.flatMap(q=>q.targets.map(a=>a.name)))];
+ return {...first,sec:g.family+' • Tur '+g.round,r:1,d:meters,displayLabel:g.family==='9×50'?'9 × 50 m':g.family==='AT'?'150 → 200 → 250 m':g.family+' • birleşik blok',timedWork:null,min:+parts.reduce((n,q)=>n+q.min,0).toFixed(1),guide:null,sendText:parts.map(q=>q.sendText).join(' / '),p:parts.map(q=>CoachPersonalPace.label(q)+': '+q.p).join(' | '),targets:names.map(name=>({name,target:null,reason:parts.map((q,j)=>{const a=q.targets.find(x=>x.name===name);return (j+1)+'. '+(a?.target?a.target.range+' • çıkış '+a.target.send+' • dinlenme '+a.target.rest:a?.reason||'Hedef eksik');}).join(' | ')}))};
+});}
 function openDryShare(){
  const el=$('sharePanel');el.hidden=false;$('shareText').value=dryShareText();$('shareStatus').textContent='Metni kopyalayıp sporcuna gönderebilirsin.';el.scrollIntoView({behavior:'smooth',block:'center'});
 }

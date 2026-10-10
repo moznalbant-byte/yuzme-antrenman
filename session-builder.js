@@ -30,7 +30,12 @@ function compose(sets,{young=false,profile='middle',recovery=false,variant=0}={}
  finish.forEach(q=>q.flowStage='Rahat bitiriş');
  // Avoid two consecutive easy closing blocks with the same purpose.
  if(!young&&recovery)finish.splice(0,1);
- return [...warm,...body,...finish];
+ return [...warm,...body,...finish].map(q=>{
+  const x={...q};x.eq=String(x.eq||'Yok').replace(/küçük palet/gi,'küçük el paleti');
+  if(x.eq==='Yok'&&x.z==='Teknik'&&/drill|teknik|scull|DPS/i.test(x.sec+' '+x.p))x.eq='Şnorkel opsiyonel';
+  if(x.eq==='Yok'&&(x.s==='Kick'||/kick|bacak/i.test(x.sec)))x.eq='Tahta opsiyonel';
+  return x;
+ });
 }
 g.SessionBuilder={compose};
 })(window);

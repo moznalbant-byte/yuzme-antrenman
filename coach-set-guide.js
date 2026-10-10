@@ -44,6 +44,15 @@ function describe(q,ctx={}){
  if(q.estimatedSend)departure+=' Bu çıkış sporcu ölçümüne dayanmayan koç referansıdır; grup hızına göre kontrol edilir.';
  const lengths=d/course; let pool=Number.isInteger(lengths)?d+' m = '+course+' m havuzda '+lengths+' havuz boyu.':d+' m bu havuzda tam boylara bölünmez; ara mesafe başlangıç/bitiş yerini koç belirler.';
  const equipment=q.eq&&q.eq!=='Yok'?q.eq+(/opsiyonel/i.test(q.eq)?'. Opsiyonel ekipman zorunlu değildir; kullanımı koç belirler.':'. Set boyunca belirtilen ekipman düzenini koru.'):'Zorunlu ekipman yok.';
+ let equipmentUse='';
+ if(/şnorkel/i.test(q.eq||''))equipmentUse+=' Şnorkeli teknik/nefes düzeni için kullan; duvar dönüşünde boruyu temizleyip rahat nefesle devam et.';
+ if(/pull buoy|\bPB\b/i.test(q.eq||''))equipmentUse+=' Pull buoy bacakların arasında tutulur; kol çekişine odaklan, gövdeyi yana savurma.';
+ if(/el paleti/i.test(q.eq||''))equipmentUse+=' El paletini ellerine tak; suyu kontrollü yakala ve çekişi zorlamadan tamamla.';
+ if(/kısa palet/i.test(q.eq||''))equipmentUse+=' Kısa ayak paletini ayaklarına tak; vuruşu kalçadan başlat, dizleri aşırı bükme.';
+ if(/tahta/i.test(q.eq||''))equipmentUse+=' Tahtayı önde tutarak bacak çalış; boynu gereksiz kaldırma. Sırtüstü bölümde koçun gösterdiği tutuşu kullan.';
+ if(/band/i.test(q.eq||''))equipmentUse+=' Bandın bu setteki yerini ve direncini koç belirler; bandlı bölümde vücut çizgisini koru.';
+ if(/çorap/i.test(q.eq||''))equipmentUse+=' Çorap ayaklarda direnç için kullanılır; dolfin vuruşunu gövdeden başlat.';
+ if(equipmentUse)execution+=equipmentUse;
  const check=zone==='Teknik'||/[ıi]s[ıi]nma|soğuma|toparlanma/i.test(sec)?'Hareket kalitesi, rahat nefes ve doğru uygulama kontrol edilir.':'Her tekrarın süresini, varsa 25/50 m geçişini ve son tekrarlardaki teknik değişimini takip et.';
  if(q.flowStage==='Hazırlık'){purpose='Ana çalışmaya hazırlanmak; rahat ritim ve temiz teknik yerleştirmek.';}
  if(q.roundFamily){departure='Bu satır turun bir bölümüdür. Sonraki bölüme, bu bölümün başlangıcından itibaren belirtilen çıkış süresi dolunca geç.';rest='Dinlenme, çıkış süresinden gerçek yüzme süren çıkarılarak bulunur; tur içindeki tek satır dinlenmesiz çalışma anlamına gelmez.';}

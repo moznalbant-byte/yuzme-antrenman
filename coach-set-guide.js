@@ -19,7 +19,7 @@ const zones={
  Teknik:['Hareket becerisini geliştirme ve yüzüşe aktarma.','Kolay/kontrollü; derece yerine doğru uygulama öncelikli.','Her tekrarda tek teknik ayrıntıya odaklan; koç geri bildirimini uygula.']
 };
 function describe(q,ctx={}){
- const zone=q.zone||String(q.z||'Teknik').split(' • ')[0],sec=String(q.sec||'Set'),p=String(q.p||''),stroke=q.s||String(q.z||'').split(' • ')[1]||'Serbest',r=Number(q.r)||1,d=Number(q.d)||50,send=Number(q.send)||0,course=parseInt(ctx.course||ctx.pool)||50;
+ const zone=q.zone||String(q.z||'Teknik').split(' • ')[0],sec=String(q.sec||'Set'),p=String(q.p||''),stroke=q.s||String(q.z||'').split(' • ')[1]||'Serbest',r=Number(q.r)||1,d=Number(q.d)||0,send=Number(q.send)||0,course=parseInt(ctx.course||ctx.pool)||50;
  const z=zones[zone]||zones.Teknik;let purpose=z[0],tempo=z[1],technical=z[2];let execution=r+' tekrar yap; her tekrarda '+d+' metreyi '+stroke+' düzeninde tamamla.';if(p)execution+=' Set düzeni: '+p;
  const easy=zone==='A1'&&/rahat|toparlanma|hız zorlamadan/i.test(p);
  if(/[ıi]s[ıi]nma|açılış|recovery swim/i.test(sec)){purpose='Ana sete hazırlanmak: su hissi, vücut pozisyonu ve rahat ritim.';technical='İlk tekrarlarda rahat başla; kulaç ve nefes düzenini yerleştir.'}
@@ -42,13 +42,25 @@ function describe(q,ctx={}){
  let rest='Dinlenme = grup çıkışı − gerçek yüzme süresi. Kişisel hedef kartındaki aralık, hedef süreye göre beklenen dinlenmedir.';
  if(r===1)rest='Bu satırda tekrar arası dinlenme yok. Sonraki sete geçişi koç yönlendirir.';
  if(q.estimatedSend)departure+=' Bu çıkış sporcu ölçümüne dayanmayan koç referansıdır; grup hızına göre kontrol edilir.';
- const lengths=d/course, pool=Number.isInteger(lengths)?d+' m = '+course+' m havuzda '+lengths+' havuz boyu.':d+' m bu havuzda tam boylara bölünmez; ara mesafe başlangıç/bitiş yerini koç belirler.';
+ const lengths=d/course; let pool=Number.isInteger(lengths)?d+' m = '+course+' m havuzda '+lengths+' havuz boyu.':d+' m bu havuzda tam boylara bölünmez; ara mesafe başlangıç/bitiş yerini koç belirler.';
  const equipment=q.eq&&q.eq!=='Yok'?q.eq+(/opsiyonel/i.test(q.eq)?'. Opsiyonel ekipman zorunlu değildir; kullanımı koç belirler.':'. Set boyunca belirtilen ekipman düzenini koru.'):'Zorunlu ekipman yok.';
  const check=zone==='Teknik'||/[ıi]s[ıi]nma|soğuma|toparlanma/i.test(sec)?'Hareket kalitesi, rahat nefes ve doğru uygulama kontrol edilir.':'Her tekrarın süresini, varsa 25/50 m geçişini ve son tekrarlardaki teknik değişimini takip et.';
- return {purpose,execution,tempo,departure,rest,technical,equipment,pool,check};
+ if(q.flowStage==='Hazırlık'){purpose='Ana çalışmaya hazırlanmak; rahat ritim ve temiz teknik yerleştirmek.';}
+ if(q.roundFamily){departure='Bu satır turun bir bölümüdür. Sonraki bölüme, bu bölümün başlangıcından itibaren belirtilen çıkış süresi dolunca geç.';rest='Dinlenme, çıkış süresinden gerçek yüzme süren çıkarılarak bulunur; tur içindeki tek satır dinlenmesiz çalışma anlamına gelmez.';}
+ if(q.restSeconds!=null){departure='Duvara varınca dinlenme sayacını başlat; '+q.restSeconds+' saniye sonra sonraki tekrara geç. Gösterilen süre, yüzüş ve dinlenme için plan tahminidir.';rest='Her tekrarın bitiminden sonra '+q.restSeconds+' sn dinlen.';}
+ if(q.coachCalibrated){departure='Sporcu hedeflerinde yazan tempo grubunun çıkışını kullan. Çıkış saati tekrarın başladığı andan sayılır; yüzüş bittikten sonra çıkış süresini tekrar bekleme.';rest='Hedef dinlenme '+(q.paceRestSeconds??10)+' sn; gerçek dinlenme çıkış süresi eksi yüzme süresidir.';}
+ if(q.coachUnmapped)tempo='Kaynak notundaki tempo ve koç talimatını uygula. Açıklanmamış kısaltmalardan kişisel derece hedefi hesaplanmaz.';
+ if(q.timedWork){execution=r+' kez '+q.timedWork+' saniye çalış. Uygulama sırası: '+p;departure='Kronometreyi çalışmanın başlangıcında başlat; '+q.timedWork+' saniye sonunda bölümü bitir. Sonraki bölüme koçun geçiş komutuyla geç.';rest=q.restSeconds!=null?q.restSeconds+' sn dinlen.':'Kaynakta ek dinlenme verilmemiş; geçişi koç yönlendirir.';pool='Bu bölüm süreyle yapılır. Yüzülen mesafeyi antrenmanda ölç; sabit bir metraj varsayma.';}
+ if(q.timedSeconds){execution=q.timedSeconds/60+' dakikalık blok boyunca şu sırayı uygula: '+p+' Blok içindeki sırayı tekrar et; süre ve mesafeyi birlikte takip et.';departure='Blok başlangıcında kronometreyi başlat; '+q.timedSeconds/60+' dakika sonunda dur.';rest='Blok içindeki bölümler arasında kaynakta yazmayan ek dinlenme ekleme; hedef erken tamamlanırsa kalan süreyi koç yönlendirir.';pool='Blok hedefi '+q.targetMeters+' m; gerçekleşen metrajı ayrıca kaydet.';}
+ if(/broken/i.test(sec+' '+p)){execution=r+' tekrar × '+d+' m. '+p+' Her parçayı sırayla tamamla; parça arasındaki dinlenmeyi tam mesafeye ek yüzüş gibi sayma.';if(q.internalRestSeconds)rest='Her tekrar içinde toplam '+q.internalRestSeconds+' sn parça arası dinlenme; tekrar sonunda '+(q.restSeconds??0)+' sn dinlenme.';}
+ const steps='1. '+(equipment==='Zorunlu ekipman yok.'?'Belirtilen başlangıç duvarında hazır ol.':'Ekipmanını hazırla: '+equipment)+' 2. '+execution+' 3. '+departure+' 4. '+technical+' 5. '+check;
+ return {purpose,execution,steps,tempo,departure,rest,technical,equipment,pool,check};
 }
-const labels={purpose:'Amaç',execution:'Uygulama',tempo:'Tempo / efor',departure:'Çıkışın anlamı',rest:'Dinlenme',technical:'Teknik odak',equipment:'Ekipman',pool:'Mesafe düzeni',check:'Koç kontrolü'};
+const labels={purpose:'Amaç',execution:'Uygulama',steps:'Adım adım yapılış',tempo:'Tempo / efor',departure:'Çıkışın anlamı',rest:'Dinlenme',technical:'Teknik odak',equipment:'Ekipman',pool:'Mesafe düzeni',check:'Koç kontrolü'};
 function rows(guide){return Object.entries(labels).filter(([key])=>guide?.[key]).map(([key,label])=>({label,text:guide[key]}))}
 function html(guide){return '<div class="set-guide">'+rows(guide).map(x=>'<div style="margin:7px 0;line-height:1.5"><b>'+esc(x.label)+':</b> '+esc(x.text)+'</div>').join('')+'</div>'}
-g.CoachSetGuide={describe,rows,html};
+function brief(guide){return '<div class="set-how" style="grid-column:1/-1;border-left:3px solid #38bdf8;padding:10px 12px;line-height:1.6"><b>Bu seti nasıl yapacaksın?</b><p style="margin:6px 0">'+esc(guide?.execution||'')+'</p><p style="margin:6px 0">'+esc(guide?.departure||'')+'</p><span class="muted">Amaç: '+esc(guide?.purpose||'')+'</span></div>'}
+function group(parts){const first=parts[0];return {purpose:first.guide?.purpose||'Tur boyunca set sırasını ve teknik kalitesini korumak.',execution:parts.map((q,i)=>(i+1)+'. bölüm: '+(q.timedWork?q.r+' × '+q.timedWork+' sn':q.r+' × '+q.d+' m')+' '+q.s+' — '+q.p).join(' '),steps:'Bölümleri yukarıdaki sırayla tamamla. Her bölümün kendi çıkış/dinlenme talimatını ve kişisel hedefini kullan. Tur bitince sonraki tur başlığına geç.',departure:'Tur içindeki her bölümün çıkışı o bölümün başlangıcından sayılır; bütün tur için tek bir çıkış kullanılmaz.',check:'Her bölümün süresini ve teknik kalitesini ayrı takip et.'};}
+g.CoachSetGuide={describe,rows,html,brief,group};
 })(window);
+

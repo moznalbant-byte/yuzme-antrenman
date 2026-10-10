@@ -15,8 +15,8 @@ function coachExampleGenerate(){
   else{x.missingNames=[...selected];x.min=+(q.r*send/60).toFixed(1);}
   x.recordPerformance=false;x.qualityRecord=false;x.recordReason='Koç set örneği • çalışma/mesafe hedefi; yarış derecesi kaydı yok';
   x.guide=CoachSetGuide.describe(x,{course:course(),age:$('age').value});
-  x.guide.execution=q.p;
-  x.guide.purpose=plan.title+' • '+q.sec;
+
+
   if(q.coachUnmapped)x.guide.tempo='Kaynak notasyonu ve koç talimatı korunur. Tempo bölgesi açıklanmadan PB/CSS üzerinden kişisel süre türetilmez.';
   if(q.roundFamily)x.guide.pool=q.roundFamily==='AT'?'150/200/250 m satırları aynı turun parçalarıdır; 600 m tur sonunda başlangıç duvarına dönülür.':q.d+' m çalışma; aynı tur içindeki sıralı çıkışları takip et.';
   if(q.timedWork){x.guide.tempo=q.timedWork+' sn süreli çalışma; metraj önceden uydurulmaz.';x.guide.departure='Süreli çalışmayı '+q.timedWork+' sn uygula; ardından '+(q.restSeconds||0)+' sn dinlen.';}

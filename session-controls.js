@@ -1,6 +1,6 @@
 /* Daily plan controls; targets are recalculated by the existing PB/CSS engine. */
 let unitVariant=0,unitEdited=false;
-function draftKey(){return JSON.stringify([$('workoutDate').value,$('age').value,$('profile').value,$('pool').value,$('session').value,$('programSource')?.value||'legacy',$('teamLevel')?.value||'B',selected,activeGroup?.id||null,period?.active?.[2]||'',period?.active?.[5]||75]);}
+function draftKey(){return JSON.stringify([$('workoutDate').value,$('age').value,$('profile').value,$('pool').value,$('session').value,$('programSource')?.value||'legacy',$('teamLevel')?.value||'B',$('atZone')?.value||'END2',$('atRest')?.value||'10',selected,activeGroup?.id||null,period?.active?.[2]||'',period?.active?.[5]||75]);}
 function saveUnitDraft(){try{localStorage.setItem('ks_daily_unit_draft',JSON.stringify({key:draftKey(),sets:workout,variant:unitVariant}));}catch(e){actionStatus('Birim bu cihazda kaydedilemedi.');}}
 function restoreUnitDraft(){try{const d=JSON.parse(localStorage.getItem('ks_daily_unit_draft')||'null');if(!planBlocked&&d?.key===draftKey()&&Array.isArray(d.sets)&&d.sets.length){unitVariant=Number(d.variant)||0;workout=d.sets.map(rebuildEditedSet);unitEdited=true;render();actionStatus('Bu gün için düzenlediğin birim cihazdan geri açıldı.');}}catch(e){}}
 function actionStatus(text){const el=$('actionStatus');if(el)el.textContent=text;}
@@ -8,7 +8,7 @@ function persistSelection(){try{localStorage.setItem('ks_daily_selection',JSON.s
 function restoreSelection(){try{const s=JSON.parse(localStorage.getItem('ks_daily_selection')||'null');if(s&&s.groupId===(activeGroup?.id||null))selected=s.names.filter(n=>KSData.athlete(n));}catch(e){}}
 function rebuildEditedSet(q){
  const x={...q,paceGroups:[],missingNames:[]};
- if(q.coachSource){const send=q.fixedSend?q.send:Math.ceil((q.d/100*(isDevelopment()?130:q.s==='Kick'?130:100)+(q.restSeconds??15))/5)*5;return {...x,send,min:+(q.r*send/60).toFixed(1),estimatedSend:!q.fixedSend,missingNames:[...selected],recordPerformance:false,qualityRecord:false,guide:{...q.guide,execution:q.p}};} 
+ if(q.coachSource){x.send=q.fixedSend?q.send:q.coachCalibrated?q.sourceSend:Math.ceil((q.d/100*(isDevelopment()?130:q.s==='Kick'?130:100)+(q.restSeconds??15))/5)*5;if(!q.coachUnmapped&&!q.fixedSend)assignPaceGroups(x);else{x.estimatedSend=!q.fixedSend;x.missingNames=[...selected];x.min=+(q.r*x.send/60).toFixed(1);}return {...x,recordPerformance:false,qualityRecord:false,guide:{...q.guide,execution:q.p}};}
  const ts=selected.map(n=>KSData.workoutTarget(n,{...x,send:null},course())).filter(Boolean);
  const estimate=x.d/100*(isDevelopment()?130:100)+rxRest(x.z,x.d,x.d).target;
  x.send=Math.ceil((ts.length?Math.max(...ts.map(t=>t.send)):estimate)/5)*5;

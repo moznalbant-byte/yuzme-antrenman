@@ -32,8 +32,8 @@ function compose(sets,{young=false,profile='middle',recovery=false,variant=0}={}
  if(!young&&recovery)finish.splice(0,1);
  return [...warm,...body,...finish].map(q=>{
   const x={...q};x.eq=String(x.eq||'Yok').replace(/küçük palet/gi,'küçük el paleti');
-  if(x.eq==='Yok'&&x.z==='Teknik'&&/drill|teknik|scull|DPS/i.test(x.sec+' '+x.p))x.eq='Şnorkel opsiyonel';
-  if(x.eq==='Yok'&&(x.s==='Kick'||/kick|bacak/i.test(x.sec)))x.eq='Tahta opsiyonel';
+  if(x.eq==='Yok'&&x.z==='Teknik'&&/drill|teknik|scull|DPS/i.test(x.sec+' '+x.p))x.eq='Şnorkel';
+  if(x.eq==='Yok'&&(x.s==='Kick'||/kick|bacak/i.test(x.sec)))x.eq=/^SPR/.test(x.z)?'Kısa palet':'Tahta';
   return x;
  });
 }

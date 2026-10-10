@@ -1,6 +1,6 @@
 /* Daily plan controls; targets are recalculated by the existing PB/CSS engine. */
 let unitVariant=0,unitEdited=false;
-function draftKey(){return JSON.stringify(['complete-source-v5',$('trainingStroke')?.value||'Serbest',$('workoutDate').value,$('age').value,$('profile').value,$('pool').value,$('session').value,$('programSource')?.value||'legacy',$('teamLevel')?.value||'B',$('atZone')?.value||'END2',$('atRest')?.value||'10',selected,activeGroup?.id||null,period?.active?.[2]||'',period?.active?.[5]||75]);}
+function draftKey(){return JSON.stringify(['complete-source-v6',$('trainingStroke')?.value||'Serbest',$('workoutDate').value,$('age').value,$('profile').value,$('pool').value,$('session').value,$('programSource')?.value||'legacy',$('teamLevel')?.value||'B',$('atZone')?.value||'END2',$('atRest')?.value||'10',selected,activeGroup?.id||null,period?.active?.[2]||'',period?.active?.[5]||75]);}
 function saveUnitDraft(){try{localStorage.setItem('ks_daily_unit_draft',JSON.stringify({key:draftKey(),sets:workout,variant:unitVariant}));}catch(e){actionStatus('Birim bu cihazda kaydedilemedi.');}}
 function restoreUnitDraft(){try{const d=JSON.parse(localStorage.getItem('ks_daily_unit_draft')||'null');if(!planBlocked&&d?.key===draftKey()&&Array.isArray(d.sets)&&d.sets.length){unitVariant=Number(d.variant)||0;workout=d.sets.map(rebuildEditedSet);unitEdited=true;render();actionStatus('Bu gün için düzenlediğin birim cihazdan geri açıldı.');}}catch(e){}}
 function actionStatus(text){const el=$('actionStatus');if(el)el.textContent=text;}

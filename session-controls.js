@@ -49,7 +49,7 @@ function wireSessionControls(){
  });
 }
 function updateButtonStates(){
- let reason=planBlocked?planWarnings.join(' '):!workout.length?'Pazartesi dinlenme günü; su birimi yok.':!selected.length?'Canlı başlatmak için önce sporcu seç.':!workoutDuration().physicallyFits120?'Birim 120 dakikayı aşıyor. Setleri düzenleyerek kısalt.':'';
+ let reason=individualCapBlocked()?'Bireysel hacim sınırı aşılıyor; setleri düzenle.':planBlocked?planWarnings.join(' '):!workout.length?'Pazartesi dinlenme günü; su birimi yok.':!selected.length?'Canlı başlatmak için önce sporcu seç.':!workoutDuration().physicallyFits120?'Birim 120 dakikayı aşıyor. Setleri düzenleyerek kısalt.':'';
  $('liveReason').textContent=reason||'Plan hazır; seçilen sporcularla canlı antrenmana geçebilirsin.';
  $('startLive').title=reason;$('alternativeUnit').disabled=planBlocked||!workout.length;
  $('unitFlow').innerHTML=workout.length?'<b>BİRİM AKIŞI</b><p>'+[...new Set(workout.map(q=>q.flowStage||q.sec))].map(escapeHtml).join(' → ')+'</p><span class="muted">'+(unitEdited?'Koç tarafından düzenlenen birim':workout[0]?.sourceTitle?escapeHtml(workout[0].sourceTitle)+' • Kaynak set yapısı':'Alternatif '+(unitVariant+1)+' • Günün profiline göre hazırlık, ana çalışma ve rahat bitiriş')+'</span>':'<b>BİRİM OLUŞTURULMADI</b><p>'+escapeHtml(reason)+'</p>';
@@ -69,3 +69,4 @@ function openDryShare(){
  const el=$('sharePanel');el.hidden=false;$('shareText').value=dryShareText();$('shareStatus').textContent='Metni kopyalayıp sporcuna gönderebilirsin.';el.scrollIntoView({behavior:'smooth',block:'center'});
 }
 async function copyDryShare(){try{if(!navigator.clipboard?.writeText)throw Error('clipboard');await navigator.clipboard.writeText($('shareText').value);$('shareStatus').textContent='Kara planı kopyalandı.';}catch(e){$('shareText').focus();$('shareText').select();$('shareStatus').textContent='Otomatik kopyalama desteklenmiyor. Seçili metni kopyala.';}}
+

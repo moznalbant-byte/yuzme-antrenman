@@ -28,5 +28,6 @@ function coachExampleGenerate(){
   return x;
  });
  if(!workoutDuration().physicallyFits120)planWarnings.push('Örnek birim 120 dk sınırını aşıyor. Kaynak setler otomatik kırpılmadı; tur veya destek hacmini koç düzenlemeli.');
- render();return true;
+ applyIndividualCaps();render();return true;
 }
+

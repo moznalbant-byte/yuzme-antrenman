@@ -1,7 +1,7 @@
 /* Shared reference extracted from the existing annual plan and weekly microcycle. */
 (function(g){'use strict';
 const START='2026-10-13',races=[['2026-12-18','2026-12-26','Ana Yarış 1'],['2027-04-14','2027-04-17','Ana Yarış 2'],['2027-08-04','2027-08-08','Ana Yarış 3']],blocks=[
-['2026-10-13','2026-10-19','Genel Hazırlık • Kısa Geçiş','Bir haftalık teknik, aerobik ritim ve yük gözlemi','A1/A2 • Teknik',60,60],
+['2026-10-13','2026-10-19','Genel Hazırlık • 1 Hafta','Bir haftalık teknik, aerobik ritim ve yük gözlemi','A1/A2 • Teknik',60,60],
 ['2026-10-20','2026-11-08','Özel Hazırlık I','Aerobik güç + profil gelişimi','A2/A3 • END2',90,75],
 ['2026-11-09','2026-11-29','Özel Hazırlık II','Yarışa özgü dayanıklılık ve hız','END2/END3 • RP • SPR',100,88],
 ['2026-11-30','2026-12-17','Taper I','Hacmi azalt, hız ve su hissini koru','RP • SPR • Teknik',55,92],

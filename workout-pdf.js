@@ -22,10 +22,11 @@ function pdfBytes(pages){
  let result=new Uint8Array(offset),pos=0;for(const c of chunks){result.set(c,pos);pos+=c.length}return result;
 }
 function exportWorkoutPDF(data){
+ if(data.includeWater&&(!Array.isArray(data.sets)||!data.sets.length))throw Error("Su seti bulunmadığı için boş PDF oluşturulmadı.");
  const pages=[];let canvas,ctx,y,links,page=0;
  const font=(size=23,bold=false)=>{ctx.font=(bold?'800 ':'')+size+'px Arial, sans-serif';ctx.fillStyle='#17283b'};
  const start=()=>{canvas=document.createElement('canvas');canvas.width=PAGE_W;canvas.height=PAGE_H;ctx=canvas.getContext('2d');if(!ctx)throw Error('PDF çizim alanı açılamadı');ctx.fillStyle='#fff';ctx.fillRect(0,0,PAGE_W,PAGE_H);links=[];page++;font(21,true);ctx.fillStyle='#c2410c';ctx.fillText('MUĞLA YÜZME',MARGIN,70);font(17);ctx.fillStyle='#64748b';ctx.fillText(data.date+' • '+data.session,MARGIN,101);ctx.fillText('Sayfa '+page,PAGE_W-MARGIN-100,PAGE_H-40);y=148};
- const finish=()=>{let raw=atob(canvas.toDataURL('image/jpeg',.94).split(',')[1]),jpeg=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)jpeg[i]=raw.charCodeAt(i);pages.push({jpeg,links})};
+ const finish=()=>{let raw=atob(canvas.toDataURL('image/jpeg',.94).split(',')[1]),jpeg=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)jpeg[i]=raw.charCodeAt(i);if(jpeg.length<1000||jpeg[0]!==255||jpeg[1]!==216)throw Error('PDF sayfası çizilemedi; tekrar dene.');pages.push({jpeg,links});canvas.width=1;canvas.height=1};
  const space=h=>{if(y+h>PAGE_H-85){finish();start()}};
  const wrap=(text,size=23,bold=false)=>{font(size,bold);let lines=[],line='';for(const word of String(text??'').split(/\s+/)){let trial=line?line+' '+word:word;if(ctx.measureText(trial).width>PAGE_W-2*MARGIN&&line){lines.push(line);line=word}else line=trial}if(line)lines.push(line);return lines};
  const text=(str,size=23,bold=false,color='#17283b')=>{for(const line of wrap(str,size,bold)){space(size+12);font(size,bold);ctx.fillStyle=color;ctx.fillText(line,MARGIN,y);y+=size+10}};
@@ -41,4 +42,5 @@ function exportWorkoutPDF(data){
 }
 window.WorkoutPDF={export:exportWorkoutPDF,encode:pdfBytes};
 })();
+
 

@@ -30,7 +30,7 @@ if(phase.includes('YARIŞ HAZIR')){weights=[0,.86,1.08,.66,.92,1.18,.62,1.02,1.1
 if(phase.includes('TAPER')){weights=[0,.66,.82,.55,.64,.90,.52,.68,.88,.76,.55];factor=.62;}
 if(phase.includes('ANA YARIŞ')){weights=[0,.48,.68,.42,.48,.72,.40,.52,.70,.58,.44];factor=.45;}
 if(phase.includes('GEÇİŞ')){weights=[0,.55,.58,.50,.58,.55,.50,.58,.52,.55,.50];factor=.58;}
-const meters=weights.map(w=>Math.round(volumeBase[profile]*factor*w*p.relativeLoad/75/100)*100);
+const meters=weights.map(w=>Math.round(volumeBase[profile]*factor*w*(p.relativeLoad/75)/100)*100);
 return{profile,phase:p.active[2],relativeLoad:p.relativeLoad,sessions:10,meters,weeklyReferenceMeters:meters.reduce((s,v)=>s+v,0),source:'v38 haftalık metraj referansı'};}
 g.SeasonReference={start:START,races,blocks,canonical,weekly};
 })(window);

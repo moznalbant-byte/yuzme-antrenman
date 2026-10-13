@@ -32,5 +32,6 @@ if(phase.includes('ANA YARIŞ')){weights=[0,.48,.68,.42,.48,.72,.40,.52,.70,.58,
 if(phase.includes('GEÇİŞ')){weights=[0,.55,.58,.50,.58,.55,.50,.58,.52,.55,.50];factor=.58;}
 const meters=weights.map(w=>Math.round(volumeBase[profile]*factor*w*(p.relativeLoad/75)/100)*100);
 return{profile,phase:p.active[2],relativeLoad:p.relativeLoad,sessions:10,meters,weeklyReferenceMeters:meters.reduce((s,v)=>s+v,0),source:'v38 haftalık metraj referansı'};}
-g.SeasonReference={start:START,races,blocks,canonical,weekly};
+function today(now=new Date()){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now),part=t=>parts.find(p=>p.type===t).value;return part('year')+'-'+part('month')+'-'+part('day');}
+g.SeasonReference={today,start:START,races,blocks,canonical,weekly};
 })(window);

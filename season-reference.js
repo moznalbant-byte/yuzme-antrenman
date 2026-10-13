@@ -1,8 +1,8 @@
 /* Shared reference extracted from the existing annual plan and weekly microcycle. */
 (function(g){'use strict';
-const START='2026-09-15',races=[['2026-12-18','2026-12-26','Ana Yarış 1'],['2027-04-14','2027-04-17','Ana Yarış 2'],['2027-08-04','2027-08-08','Ana Yarış 3']],blocks=[
-['2026-09-15','2026-10-11','Genel Hazırlık','Teknik taban + aerobik kapasite','A1/A2 • Teknik',75,60],
-['2026-10-12','2026-11-08','Özel Hazırlık I','Aerobik güç + profil gelişimi','A2/A3 • END2',90,75],
+const START='2026-10-13',races=[['2026-12-18','2026-12-26','Ana Yarış 1'],['2027-04-14','2027-04-17','Ana Yarış 2'],['2027-08-04','2027-08-08','Ana Yarış 3']],blocks=[
+['2026-10-13','2026-10-19','Genel Hazırlık • Kısa Geçiş','Bir haftalık teknik, aerobik ritim ve yük gözlemi','A1/A2 • Teknik',60,60],
+['2026-10-20','2026-11-08','Özel Hazırlık I','Aerobik güç + profil gelişimi','A2/A3 • END2',90,75],
 ['2026-11-09','2026-11-29','Özel Hazırlık II','Yarışa özgü dayanıklılık ve hız','END2/END3 • RP • SPR',100,88],
 ['2026-11-30','2026-12-17','Taper I','Hacmi azalt, hız ve su hissini koru','RP • SPR • Teknik',55,92],
 ['2026-12-18','2026-12-26','ANA YARIŞ I','9 günlük yarış penceresi','Yarış + aktif toparlanma',30,100],
@@ -22,7 +22,7 @@ const START='2026-09-15',races=[['2026-12-18','2026-12-26','Ana Yarış 1'],['20
 ];
 const multipliers={'8–10 Yaş Gelişim':.62,'11–12 Yaş Gelişim':.62,'13–16 Orta Mesafe':1,'13–16 Sprint':.82,'13–16 Uzun Mesafe':1.12,'13–16 Branşçı':.92};
 const volumeBase={'8–10 Yaş Gelişim':3200,'11–12 Yaş Gelişim':3200,'13–16 Sprint':4400,'13–16 Orta Mesafe':5600,'13–16 Uzun Mesafe':6800,'13–16 Branşçı':5000};
-function canonical(date,custom){const source=custom?.blocks?.length?custom:{start:START,weekStart:'2026-09-14',races,blocks};const active=source.blocks.find(b=>date>=b[0]&&date<=b[1]);if(!active)return null;const week=Math.max(1,Math.floor((Date.parse(date+'T12:00:00Z')-Date.parse((source.weekStart||'2026-09-14')+'T12:00:00Z'))/604800000)+1),micro=(week-1)%4+1,protectedPhase=/TAPER|ANA YARIŞ|GEÇİŞ/.test(active[2].toLocaleUpperCase('tr-TR')),factor=protectedPhase?1:[.92,.96,1,.78][micro-1];return{...source,source:'v37',active,selectedDate:date,relativeLoad:Math.round(active[5]*factor),week,microcycle:micro,recoveryWeek:!protectedPhase&&micro===4,nextRace:source.races?.find(r=>date<=r[1])||null};}
+function canonical(date,custom){const source=custom?.revision===4&&custom?.blocks?.length?custom:{start:START,weekStart:'2026-10-12',races,blocks};const active=source.blocks.find(b=>date>=b[0]&&date<=b[1]);if(!active)return null;const week=Math.max(1,Math.floor((Date.parse(date+'T12:00:00Z')-Date.parse((source.weekStart||'2026-10-12')+'T12:00:00Z'))/604800000)+1),micro=(week-1)%4+1,protectedPhase=/TAPER|ANA YARIŞ|GEÇİŞ/.test(active[2].toLocaleUpperCase('tr-TR')),factor=protectedPhase?1:[.92,.96,1,.78][micro-1];return{...source,source:'v37',revision:4,active,selectedDate:date,relativeLoad:Math.round(active[5]*factor),week,microcycle:micro,recoveryWeek:!protectedPhase&&micro===4,nextRace:source.races?.find(r=>date<=r[1])||null};}
 function weekly(profile,date,custom){const p=canonical(date,custom);if(!p||!volumeBase[profile])return null;const phase=p.active[2].toLocaleUpperCase('tr-TR');let weights=[0,.95,1.12,.72,.98,1.12,.68,1.08,1.02,1.12,.78],factor=1;
 if(phase.includes('GENEL'))weights=[0,1.02,1.05,.78,1.02,1.04,.74,1.04,.86,1.08,.82];
 if(phase.includes('ÖZEL')){weights=[0,.94,1.10,.70,1,1.14,.66,1.10,1.04,1.14,.76];factor=.98;}

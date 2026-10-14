@@ -33,6 +33,7 @@ run("period=SeasonReference.canonical('2026-10-14');workout=[{r:10,d:200,z:'A1'}
 const weekly=ctx.SeasonReference.weekly('13–16 Orta Mesafe','2026-10-14').meters[3];
 assert.equal(run('weeklyUnitReference()'),weekly);
 for(const team of ['A','B','C']){e.el('teamLevel').value=team;assert.equal(run("plannedVolumeFactor('GENEL HAZIRLIK')")*2000,weekly);}
+run("workout=[{r:5,d:200,z:'A1',p:'',_referenceMeters:1175},{r:2,d:50,z:'Teknik',p:'',_referenceMeters:163},{r:9,d:200,z:'SPR2',p:''}];alignWeeklyRounding()");assert.equal(run('workout.reduce((sum,q)=>sum+q.r*q.d,0)'),3200);assert.equal(run('workout[2].r'),9);assert(run('workout.every(q=>(q.r*q.d)%100===0)'));
 console.log('PASS: automatic daily units use weekly reference once, independent of example team round count');
 console.log('PASS: correct branş targets, missing-data behavior, canonical history/adaptation, separate work split, energy split, transitions, queue errors/retry/reload/revision, cloud merge, live commit/resume');
 }

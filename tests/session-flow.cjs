@@ -25,6 +25,15 @@ let clock=Date.now(),oldNow=ctx.Date.now;ctx.Date.now=()=>clock;ctx.__test.set({
 storage.v18Athletes=JSON.stringify([{name:'Test',stroke:'',pb:{'50':{Serbest:{100:60}}}}]);ctx.__test.renderLive();payload.targets={};storage.ks_v21_workout=JSON.stringify(payload);ctx.__test.loadDaily();ctx.__test.renderLive();assert(e.el('athletes').innerHTML.includes('Ana branş seçilmedi'));
 // Energy distribution and transition budget.
 let day=[...fs.readFileSync(root+'v21-daily-workout.html','utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)].find(m=>m[1].startsWith('const $='))[1];day=day.slice(0,day.indexOf('if(period){'));vm.runInContext(day,ctx);run("workout=[{r:8,d:50,workDistance:25,returnDistance:25,z:'SPR2',send:120,eq:'Palet'},{r:4,d:100,z:'A1',send:120,eq:'Yok'}]");const zones=run('zoneDistribution()');assert.equal(zones.raw.SPR2,200);assert.equal(zones.raw.A1,600);assert.equal(zones.total,800);assert.equal(run('transitionSeconds()'),90);assert.equal(run('workoutDuration().transitionMin'),1.5);
+
+// A daily template is sized to the independent weekly meter reference once.
+vm.runInContext(fs.readFileSync(root+'season-reference.js','utf8'),ctx);
+e.el('programSource').value='auto';e.el('age').value='13–16 Yaş';e.el('profile').value='Orta Mesafe';e.el('session').value='Çarşamba';e.el('workoutDate').value='2026-10-14';
+run("period=SeasonReference.canonical('2026-10-14');workout=[{r:10,d:200,z:'A1'}]");
+const weekly=ctx.SeasonReference.weekly('13–16 Orta Mesafe','2026-10-14').meters[3];
+assert.equal(run('weeklyUnitReference()'),weekly);
+for(const team of ['A','B','C']){e.el('teamLevel').value=team;assert.equal(run("plannedVolumeFactor('GENEL HAZIRLIK')")*2000,weekly);}
+console.log('PASS: automatic daily units use weekly reference once, independent of example team round count');
 console.log('PASS: correct branş targets, missing-data behavior, canonical history/adaptation, separate work split, energy split, transitions, queue errors/retry/reload/revision, cloud merge, live commit/resume');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
